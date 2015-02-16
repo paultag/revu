@@ -1,0 +1,4 @@
+
+
+class Checker:
+    pass
