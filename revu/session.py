@@ -1,6 +1,7 @@
 from revu.queues.github import GithubQueue
 from revu.queue import Review
 
+import tmuxp
 import readline
 import cmd
 
@@ -25,15 +26,44 @@ class Session:
 class TmuxController:
     def __init__(self, session_name):
         self.session_name = session_name
+        self.server = tmuxp.Server()
+        try:
+            self.session = self.server.new_session(
+                session_name=self.session_name,
+                kill_session=False,
+                detatch=True,
+            )
+        except tmuxp.exc.TmuxSessionExists:
+            self.session = self.server.findWhere({
+                "session_name": session_name
+            })
+
+    def _clean(self):
+        for window in self.session.list_windows():
+            window.kill_window()
+
+    def window(self, window_name, start_directory, *args, **kwargs):
+        # self._clean()  # XXX: Implement this correctly.
+        return self.session.new_window(
+            window_name=window_name,
+            start_directory=start_directory,
+            attach=True)
+
 
 
 class SessionREPL(cmd.Cmd):
     def __init__(self, projects):
         self.projects = projects
         self.session = Session(self.projects)
+        self.tmux_controller = TmuxController("revu")
+
         self.review = None
         self.project = None
         self.prs = []
+
+        print("Please run: `tmux attach-session -t revu`")
+        print("")
+        print("")
 
         super(SessionREPL, self).__init__()
 
@@ -71,7 +101,13 @@ class SessionREPL(cmd.Cmd):
         mc = self.review.checkout()
         if mc:
             print("Euch, there was a merge conflict.")
-        print("Ready for human intervention. - {}".format(self.review.repo))
+        print("Ready for human intervention. - check the tmux pane".format(
+            self.review.repo
+        ))
+        self.tmux_controller.window(
+            "pr-{}".format(self.review.pr.number),
+            self.review.repo
+        )
 
     do_r = do_review
 
