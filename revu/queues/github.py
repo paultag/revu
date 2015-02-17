@@ -26,7 +26,6 @@ class GithubQueue(Queue):
         for request in requests:
             yield (request, repo)
 
-
     def _get_prs(self, repos):
         for repo in repos:
             yield from self._get_pr(*repo.split("/", 1))

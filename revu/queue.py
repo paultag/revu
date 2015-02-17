@@ -12,7 +12,8 @@ class Queue:
 
 
 class Project:
-    def __init__(self, repo, path):
+    def __init__(self, name, repo, path):
+        self.name = name
         self.repo = repo
         self.path = path
 
