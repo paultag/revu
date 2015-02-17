@@ -19,5 +19,8 @@ setup(
     url="http://pault.ag/",
     platforms=['any'],
     entry_points={
+        'console_scripts': [
+            'revu = revu.cli:main',
+        ]
     }
 )

@@ -5,6 +5,7 @@ import os
 import shutil
 import tempfile
 import contextlib
+import configparser
 
 
 class Queue:
@@ -16,6 +17,13 @@ class Project:
         self.name = name
         self.repo = repo
         self.path = path
+
+    @classmethod
+    def from_config(cls, path):
+        config = configparser.ConfigParser()
+        config.read([os.path.expanduser(path)])
+        for section, name in ((config[x], x) for x in config.sections()):
+            yield Project(name=name, **section)
 
 
 class PullRequest:  # Implied this is a Git repo
