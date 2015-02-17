@@ -117,6 +117,18 @@ class SessionREPL(cmd.Cmd):
             return
         self.review.comment(line)
 
+    def do_merge(self, line):
+        if self.review is None:
+            print("Need to be on a review")
+            return
+        self.review.merge()
+
+    def do_push(self, line):
+        if self.review is None:
+            print("Need to be on a review")
+            return
+        self.review.push()
+
     def do_list(self, line):
         print("Known projects")
         print("==============")

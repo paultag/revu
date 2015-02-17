@@ -78,7 +78,7 @@ class Review:
         self.log("Done.")
 
     def push(self):
-        self._git.push("origin", self.pr.oref, self.pr.oref)
+        self._git.push("origin", self.pr.oref)
 
     def comment(self, message):
         issue = self.pr._repo.issue(self.pr._pr.number)
