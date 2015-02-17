@@ -22,6 +22,11 @@ class Session:
             yield Review(project.path, changeset)
 
 
+class TmuxController:
+    def __init__(self, session_name):
+        self.session_name = session_name
+
+
 class SessionREPL(cmd.Cmd):
     def __init__(self, projects):
         self.projects = projects
@@ -48,6 +53,8 @@ class SessionREPL(cmd.Cmd):
     def do_workon(self, line):
         self.project = self.session.get(line)
 
+    do_w = do_workon
+
     def do_prs(self, line):
         if self.project is None:
             print("Please select a project with `workon` first.")
@@ -61,7 +68,12 @@ class SessionREPL(cmd.Cmd):
 
     def do_review(self, line):
         self.review = self.prs[int(line)]
-        print("Reviewing")
+        mc = self.review.checkout()
+        if mc:
+            print("Euch, there was a merge conflict.")
+        print("Ready for human intervention. - {}".format(self.review.repo))
+
+    do_r = do_review
 
     def do_comment(self, line):
         if self.review is None:
@@ -75,6 +87,8 @@ class SessionREPL(cmd.Cmd):
         for project in self.projects:
             print("{project.name}".format(project=project))
         print("")
+
+    do_l = do_list
 
     def do_EOF(self, line):
         return True
