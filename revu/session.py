@@ -4,6 +4,7 @@ from revu.queue import Review
 import tmuxp
 import readline
 import cmd
+from sh import x_terminal_emulator
 
 
 class Session:
@@ -61,9 +62,11 @@ class SessionREPL(cmd.Cmd):
         self.project = None
         self.prs = []
 
-        print("Please run: `tmux attach-session -t revu`")
-        print("")
-        print("")
+        x_terminal_emulator(e='tmux attach-session -t revu')
+
+        # print("Please run: `tmux attach-session -t revu`")
+        # print("")
+        # print("")
 
         super(SessionREPL, self).__init__()
 
