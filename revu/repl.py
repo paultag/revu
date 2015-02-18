@@ -14,10 +14,16 @@ class RevuREPL(cmd.Cmd):
 
     def do_next(self, line):
         try:
-            review = next(self.reviews)
+            self.review = next(self.reviews)
         except StopIteration:
             return True
-        print(review.summary())
+        print(self.review.summary())
+
+    def do_comment(self, line):
+        if self.review is None:
+            print("Take a review first, homie! (type `next`)")
+            return
+        self.review.comment(line)
 
     def do_EOF(self, line):
         return True
