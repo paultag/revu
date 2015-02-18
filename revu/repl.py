@@ -17,7 +17,9 @@ class RevuREPL(cmd.Cmd):
             self.review = next(self.reviews)
         except StopIteration:
             return True
-        self.repo.review(self.review)
+        is_clean = self.repo.review(self.review)
+        if not is_clean:
+            print("merging went poorly; please resolve merge conflict")
         print(self.review.summary())
 
     def do_comment(self, line):

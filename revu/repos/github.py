@@ -4,6 +4,7 @@ from ..repo import Review
 from sh import git
 import github3
 import os
+import sh
 
 
 class GitHubReview(Review):
@@ -93,4 +94,8 @@ class GitHubRepo(GitRepo):
         ))
 
         self.git.checkout(rref)
-        gc.merge(oname)
+        try:
+            gc.merge(oname)
+        except sh.ErrorReturnCode_1:
+            return False
+        return True
