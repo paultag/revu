@@ -6,10 +6,10 @@ class GitRepo(Repo):
 
     def __init__(self, *, path):
         self.path = path
-        self.git_repo = Repository('{}/.git'.format(self.path))
+        self.git = Repository('{}/.git'.format(self.path))
 
     def is_clean(self):
-        diff = self.git_repo.diff()
+        diff = self.git.diff()
         patch = diff.patch
         return patch is None
 
