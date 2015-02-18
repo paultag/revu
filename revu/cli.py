@@ -20,8 +20,10 @@ def main():
             return
 
         tmux = TmuxSession("revu")
-
-        repl = RevuREPL(repo=repo, session=tmux)
-        repl.cmdloop()
+        for review in repo.reviews():
+            repl = RevuREPL(review=review, repo=repo, session=tmux)
+            if not repo.review(review):
+                print("merging went poorly; please resolve merge conflict")
+            repl.cmdloop()
 
     return _(*sys.argv[1:])
