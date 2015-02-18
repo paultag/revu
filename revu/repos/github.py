@@ -1,6 +1,7 @@
 from .git import GitRepo
 from ..repo import Review
 
+from sh import git
 import github3
 import os
 
@@ -66,11 +67,31 @@ class GitHubRepo(GitRepo):
         head = review.pr.head
         base = review.pr.base
         target = base.ref  # Great; we just need to do the checkout now.
-        ref = self.git.lookup_reference('refs/remotes/origin/{}'.format(target))
-        entry = next(ref.log())
-        commit = self.git.get(entry.oid_new)
-        review.branch = self.git.create_branch(
-            'pr/{}'.format(review.pr.number),
-            commit
-        )
-        self.git.checkout(review.branch)
+
+        oname = 'refs/remotes/origin/{}'.format(target)
+        oref = self.git.lookup_reference(oname)
+
+        review.branch = "pr/{}".format(review.pr.number)
+
+        try:
+            rref = self.git.lookup_reference('refs/heads/{}'.format(
+                review.branch
+            ))
+            self.git.checkout(oname)
+            print("PR branch known; blasting")
+            rref.delete()
+        except KeyError:
+            pass
+
+        gc = git.bake(C=self.path)
+        gc.fetch("origin", "refs/pull/{no}/head:{branch}".format(
+            no=review.pr.number,
+            branch=review.branch,
+        ))
+
+        rref = self.git.lookup_reference('refs/heads/{}'.format(review.branch))
+        loge = next(rref.log())
+        tip = loge.oid_new
+        self.git.checkout(rref)
+        print(self.git.merge_analysis(tip))
+        # self.git.merge(tip)
