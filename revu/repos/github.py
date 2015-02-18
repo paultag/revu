@@ -24,7 +24,7 @@ URL:          {pr.html_url}
 {pr.body}
         """.format(pr=self.pr, repo=self.repo, issue=self.issue)
 
-    def comment(self):
+    def comment(self, body):
         raise NotImplementedError("Implement me")
 
     def diff(self):
