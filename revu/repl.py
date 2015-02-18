@@ -1,3 +1,5 @@
+import subprocess
+import tempfile
 import cmd
 
 
@@ -21,6 +23,17 @@ class RevuREPL(cmd.Cmd):
         if not is_clean:
             print("merging went poorly; please resolve merge conflict")
         print(self.review.summary())
+
+    def do_diff(self, line):
+        if self.review is None:
+            print("Take a review first, homie! (type `next`)")
+            return
+
+        with tempfile.NamedTemporaryFile(suffix='task') as temp:
+            with open(temp.name, 'w') as fd:
+                fd.write(self.review.diff())
+
+            subprocess.call(['vimdiff', temp.name])
 
     def do_comment(self, line):
         if self.review is None:

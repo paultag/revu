@@ -8,9 +8,10 @@ import sh
 
 
 class GitHubReview(Review):
-    def __init__(self, *, repo, pr):
+    def __init__(self, *, repo, git, pr):
         self.repo = repo
         self.pr = pr
+        self.git = git
         self.issue = repo.issue(pr.number)
 
     def summary(self):
@@ -30,7 +31,8 @@ URL:          {pr.html_url}
         return self.issue.create_comment(body=body)
 
     def diff(self):
-        raise NotImplementedError("Implement me")
+        diff = self.git.diff(self.pr.base.ref)
+        return diff.patch
 
     def merge(self):
         raise NotImplementedError("Implement me")
@@ -62,7 +64,7 @@ class GitHubRepo(GitRepo):
 
     def reviews(self):
         for review in self.github_repo.iter_pulls():
-            yield GitHubReview(pr=review, repo=self.github_repo)
+            yield GitHubReview(pr=review, git=self.git, repo=self.github_repo)
 
     def review(self, review):
         head = review.pr.head
