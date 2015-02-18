@@ -63,4 +63,14 @@ class GitHubRepo(GitRepo):
             yield GitHubReview(pr=review, repo=self.github_repo)
 
     def review(self, review):
-        pass
+        head = review.pr.head
+        base = review.pr.base
+        target = base.ref  # Great; we just need to do the checkout now.
+        ref = self.git.lookup_reference('refs/remotes/origin/{}'.format(target))
+        entry = next(ref.log())
+        commit = self.git.get(entry.oid_new)
+        review.branch = self.git.create_branch(
+            'pr/{}'.format(review.pr.number),
+            commit
+        )
+        self.git.checkout(review.branch)

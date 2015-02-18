@@ -17,6 +17,7 @@ class RevuREPL(cmd.Cmd):
             self.review = next(self.reviews)
         except StopIteration:
             return True
+        self.repo.review(self.review)
         print(self.review.summary())
 
     def do_comment(self, line):
