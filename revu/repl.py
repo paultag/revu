@@ -5,8 +5,9 @@ import cmd
 
 class RevuREPL(cmd.Cmd):
 
-    def __init__(self, repo):
+    def __init__(self, *, repo, session):
         self.repo = repo
+        self.session = session
         self.reviews = repo.reviews()
         super(RevuREPL, self).__init__()
 
@@ -23,6 +24,7 @@ class RevuREPL(cmd.Cmd):
         if not is_clean:
             print("merging went poorly; please resolve merge conflict")
         print(self.review.summary())
+        self.session.review(self.repo.path)
 
     def do_diff(self, line):
         if self.review is None:

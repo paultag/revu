@@ -3,6 +3,7 @@ import sys
 import os
 
 from revu.repos.github import GitHubRepo
+from revu.sessions.tmux import TmuxSession
 from revu.repl import RevuREPL
 
 
@@ -18,7 +19,9 @@ def main():
             print("Please stash any changes and push up unpushed work.")
             return
 
-        repl = RevuREPL(repo)
+        tmux = TmuxSession("revu")
+
+        repl = RevuREPL(repo=repo, session=tmux)
         repl.cmdloop()
 
     return _(*sys.argv[1:])
