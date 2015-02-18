@@ -24,6 +24,9 @@ def main():
             repl = RevuREPL(review=review, repo=repo, session=tmux)
             if not repo.review(review):
                 print("merging went poorly; please resolve merge conflict")
-            repl.cmdloop()
+            try:
+                repl.cmdloop()
+            except StopIteration:
+                break
 
     return _(*sys.argv[1:])

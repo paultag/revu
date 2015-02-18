@@ -81,7 +81,6 @@ class GitHubRepo(GitRepo):
                 review.branch
             ))
             self.git.checkout(oname)
-            print("PR branch known; blasting")
             rref.delete()
         except KeyError:
             pass

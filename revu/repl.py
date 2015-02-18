@@ -33,4 +33,7 @@ class RevuREPL(cmd.Cmd):
         return True
 
     def do_EOF(self, line):
-        return True
+        print("")
+        raise StopIteration("Stawp")
+
+    do_exit = do_EOF
