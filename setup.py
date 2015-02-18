@@ -21,7 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'revu = revu.cli:main',
-            'revu-comment = revu.cli:comment',
+            # 'revu-comment = revu.cli:comment',
         ]
     }
 )
