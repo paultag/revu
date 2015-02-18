@@ -88,10 +88,9 @@ class GitHubRepo(GitRepo):
             no=review.pr.number,
             branch=review.branch,
         ))
+        rref = self.git.lookup_reference('refs/heads/{}'.format(
+            review.branch
+        ))
 
-        rref = self.git.lookup_reference('refs/heads/{}'.format(review.branch))
-        loge = next(rref.log())
-        tip = loge.oid_new
         self.git.checkout(rref)
-        print(self.git.merge_analysis(tip))
-        # self.git.merge(tip)
+        gc.merge(oname)
