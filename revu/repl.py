@@ -28,11 +28,9 @@ class RevuREPL(cmd.Cmd):
         if self.review is None:
             print("Take a review first, homie! (type `next`)")
             return
-
         with tempfile.NamedTemporaryFile(suffix='task') as temp:
             with open(temp.name, 'w') as fd:
                 fd.write(self.review.diff())
-
             subprocess.call(['vimdiff', temp.name])
 
     def do_comment(self, line):
