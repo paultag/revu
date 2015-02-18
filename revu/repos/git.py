@@ -1,18 +1,17 @@
 from revu.repo import Repo, Review
-import dulwich.repo
+from pygit2 import Repository
 
 
 class GitRepo(Repo):
 
     def __init__(self, *, path):
         self.path = path
+        self.git_repo = Repository('{}/.git'.format(self.path))
 
     def is_clean(self):
-        repo = dulwich.repo.Repo(self.path)
-        index = repo.open_index()
-        print(index)
-
-        return False
+        diff = self.git_repo.diff()
+        patch = diff.patch
+        return patch is None
 
     def reviews(self):
         """
