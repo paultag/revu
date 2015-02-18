@@ -9,7 +9,7 @@ setup(
     version=__version__,
     packages=[
         'revu',
-        'revu.queues',
+        # 'revu.queues',
     ],
     author="Paul Tagliamonte",
     author_email="tag@pault.ag",
@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'revu = revu.cli:main',
+            'revu-comment = revu.cli:comment',
         ]
     }
 )
