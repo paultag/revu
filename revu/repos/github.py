@@ -1,4 +1,23 @@
 from .git import GitRepo
+from ..repo import Review
+
+
+class GitHubReview(Review):
+
+    def __init__(self, *, number):
+        pass
+
+    def comment(self):
+        raise NotImplementedError("Implement me")
+
+    def diff(self):
+        raise NotImplementedError("Implement me")
+
+    def merge(self):
+        raise NotImplementedError("Implement me")
+
+    def push(self):
+        raise NotImplementedError("Implement me")
 
 
 class GitHubRepo(GitRepo):
@@ -11,3 +30,7 @@ class GitHubRepo(GitRepo):
     def reviews(self):
         if False:
             yield
+
+    def review(self, review):
+        pass
+

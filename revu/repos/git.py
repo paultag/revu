@@ -13,6 +13,12 @@ class GitRepo(Repo):
         patch = diff.patch
         return patch is None
 
+    def review(self, review):
+        """
+        Apply and checkout the review.
+        """
+        raise NotImplementedError("Implement me")
+
     def reviews(self):
         """
         Iterate over open reviews for this repo.

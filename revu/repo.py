@@ -9,6 +9,12 @@ class Repo(object):
         """
         raise NotImplementedError("Implement me")
 
+    def review(self, review):
+        """
+        Apply and checkout the review.
+        """
+        raise NotImplementedError("Implement me")
+
     def reviews(self):
         """
         Iterate over open reviews for this repo.
