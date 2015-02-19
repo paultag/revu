@@ -36,3 +36,5 @@ and type in `tmux attach-session -t revu`. This pane will be controled by the
 `revu` controller.
 
 Some good first commands: `log`, `comments`, or `diff`.
+
+![](http://i.imgur.com/zh0gajE.jpg)
