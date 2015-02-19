@@ -24,11 +24,41 @@ State:        {pr.state}
 Comments:     {pr.review_comments_count}/{issue.comments}
 URL:          {pr.html_url}
 
-{pr.body}
-        """.format(pr=self.pr, repo=self.repo, issue=self.issue)
+{body}
+        """.format(
+            pr=self.pr,
+            repo=self.repo,
+            issue=self.issue,
+            body="\n".join(self._display(self.issue.body, " |  ")))
 
     def comment(self, body):
         return self.issue.create_comment(body=body)
+
+    def _display(self, text, indent, align=80):
+        text = text.strip("\n")
+        if len(text) < align:
+            line = indent + text
+            yield line
+            return
+        idex = text.find("\n", 0, align)
+        if idex == -1:
+            idex = align
+        line = indent + text[:idex]
+        yield line
+        yield from self._display(text[idex:], indent, align=align)
+
+
+    def comments(self):
+        for comment in self.issue.iter_comments():
+            yield """\
+From: {comment.user.login} at {comment.updated_at:%Y-%m-%d %I:%M%p %z}
+
+{body}
+            """.format(
+                comment=comment,
+                issue=self.issue,
+                body="\n".join(self._display(comment.body, " |  "))
+            )
 
     def diff(self):
         diff = self.git.diff(self.pr.base.ref)

@@ -26,6 +26,17 @@ class RevuREPL(cmd.Cmd):
                 fd.write(self.review.diff())
             subprocess.call(['vimdiff', temp.name])
 
+    def do_log(self, line):
+        subprocess.call([
+            'git', '-C', self.repo.path,
+            'log', '--graph', '--oneline',
+            "{}...pr/{}".format(self.review.pr.base.ref, self.review.pr.number),
+        ])
+
+    def do_comments(self, line):
+        for comment in self.review.comments():
+            print(comment)
+
     def do_comment(self, line):
         self.review.comment(line)
 

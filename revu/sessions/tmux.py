@@ -17,8 +17,13 @@ class TmuxSession(Session):
                 "session_name": session_name
             })
 
+    def _clean(self):
+        for window in self.session.windows:
+            if window.get('window_name') == 'revu-review':
+                window.kill_window()
+
     def review(self, path):
-        # self._clean()  # XXX: Implement this correctly.
+        self._clean()
         return self.session.new_window(
             window_name="revu-review",
             start_directory=path,
