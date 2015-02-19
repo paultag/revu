@@ -97,6 +97,7 @@ From: {comment.user.login} at {comment.updated_at:%Y-%m-%d %I:%M%p %z}
         gc = git.bake(C=self.repo.path)
         gc.push("origin", self.pr.base.ref)
 
+
 class GitHubRepo(GitRepo):
 
     def __init__(self, *, name, repo, path):
