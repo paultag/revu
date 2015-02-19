@@ -28,11 +28,12 @@ import sh
 
 
 class GitHubReview(Review):
-    def __init__(self, *, repo, git, pr):
-        self.repo = repo
+    def __init__(self, *, repo, github, git, pr):
         self.pr = pr
         self.git = git
-        self.issue = repo.issue(pr.number)
+        self.repo = repo
+        self.github = github
+        self.issue = github.issue(pr.number)
 
     def summary(self):
         return """\
@@ -47,7 +48,7 @@ URL:          {pr.html_url}
 {body}
         """.format(
             pr=self.pr,
-            repo=self.repo,
+            github=self.github,
             issue=self.issue,
             body="\n".join(self._display(self.issue.body, " |  ")))
 
@@ -85,11 +86,16 @@ From: {comment.user.login} at {comment.updated_at:%Y-%m-%d %I:%M%p %z}
         return diff.patch
 
     def merge(self):
-        raise NotImplementedError("Implement me")
+        oref = self.git.lookup_reference("refs/heads/{}".format(
+            self.pr.base.ref
+        ))
+        self.git.checkout(oref)
+        gc = git.bake(C=self.repo.path)
+        gc.merge("pr/{}".format(self.pr.number))
 
     def push(self):
-        raise NotImplementedError("Implement me")
-
+        gc = git.bake(C=self.repo.path)
+        gc.push("origin", self.pr.base.ref)
 
 class GitHubRepo(GitRepo):
 
@@ -114,7 +120,10 @@ class GitHubRepo(GitRepo):
 
     def reviews(self):
         for review in self.github_repo.iter_pulls():
-            yield GitHubReview(pr=review, git=self.git, repo=self.github_repo)
+            yield GitHubReview(pr=review,
+                               repo=self,
+                               git=self.git,
+                               github=self.github_repo)
 
     def review(self, review):
         head = review.pr.head

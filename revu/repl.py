@@ -60,6 +60,13 @@ class RevuREPL(cmd.Cmd):
     def do_comment(self, line):
         self.review.comment(line)
 
+    def do_merge(self, line):
+        self.review.merge()
+
+    def do_push(self, line):
+        self.review.push()
+        return True
+
     def do_skip(self, line):
         return True
 
