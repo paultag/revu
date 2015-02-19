@@ -5,7 +5,7 @@ Help review your patches!
 ## Quickstart
 
 ```
-mkvirutalenv --python=$(which python3.4) revu
+mkvirtualenv --python=$(which python3.4) revu
 workon revu
 # You might need to install libgit2-dev & libffi-dev
 pip install -r requirements.txt
