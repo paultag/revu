@@ -28,9 +28,17 @@ from revu.repl import RevuREPL
 
 
 def main():
-    def _(project):
+    def _(project=None):
         config = configparser.ConfigParser()
         config.read([os.path.expanduser(os.path.expanduser("~/.revu.conf"))])
+
+        if project is None:
+            for block in config:
+                if block == "DEFAULT":
+                    continue
+                print(block)
+            return
+
         pdict = config[project]
 
         repo = GitHubRepo(name=project, **pdict)
