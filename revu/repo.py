@@ -9,6 +9,9 @@ class Repo(object):
         """
         raise NotImplementedError("Implement me")
 
+    def restore(self):
+        raise NotImplementedError("Implement me")
+
     def review(self, review):
         """
         Apply and checkout the review.
