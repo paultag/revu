@@ -82,10 +82,23 @@ def comment():
 
         with tempfile.NamedTemporaryFile(suffix=".tmp") as tmp:
             with open(tmp.name, 'w') as fd:
-                fd.write("    ")
-                fd.write("\n    ".join([x.strip() for x in lines[-20:]]))
+                fd.write("```diff\n")
+                fd.write("\n".join([x.strip() for x in lines[-20:]]))
+                fd.write("\n```\n")
             subprocess.call(['vim', tmp.name])
             with open(tmp.name, 'r') as comment:
                 body = comment.read()
 
+        print(body)
+        print("")
+        print("  File PR comment? Type 'y' if yes, 'n' if no.")
+        while True:
+            x = input().strip()
+            if x == 'y':
+                break
+            if x == 'n':
+                return
+            print("Please enter 'y' or 'n'")
+        print("Filing...")
         pr.create_review_comment(body, log, fpath, index)
+        print("Comment sent in!")
