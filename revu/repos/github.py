@@ -27,6 +27,22 @@ import os
 import sh
 
 
+def get_key():
+    key = os.environ.get("GITHUB_API_KEY", None)
+    if key:
+        return key
+    try:
+        with open(os.path.expanduser("~/.github.key"), 'r') as fd:
+            key = fd.read().strip()
+    except IOError:
+        raise ValueError("No key defined")
+    return key
+
+
+def get_github(user):
+    return github3.GitHub(user, get_key())
+
+
 class GitHubReview(Review):
     def __init__(self, *, repo, github, git, pr):
         self.pr = pr
@@ -34,6 +50,8 @@ class GitHubReview(Review):
         self.repo = repo
         self.github = github
         self.issue = github.issue(pr.number)
+
+        os.environ["REVU_GITHUB_PULL_REQUEST"] = str(pr.number)
 
     def summary(self):
         return """\
@@ -105,19 +123,9 @@ class GitHubRepo(GitRepo):
         self.repo = repo
         self.name = name
         self.user = "paultag"  # XXX: Fix?
-        self.github = github3.GitHub(self.user, self.get_key())
+        self.github = get_github(self.user)
         self.github_repo = self.github.repository(*self.repo.split("/", 1))
-
-    def get_key(self):
-        key = os.environ.get("GITHUB_API_KEY", None)
-        if key:
-            return key
-        try:
-            with open(os.path.expanduser("~/.github.key"), 'r') as fd:
-                key = fd.read().strip()
-        except IOError:
-            raise ValueError("No key defined")
-        return key
+        os.environ["REVU_GITHUB_REPO"] = repo
 
     def reviews(self):
         for review in self.github_repo.iter_pulls():

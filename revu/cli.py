@@ -19,12 +19,15 @@
 # DEALINGS IN THE SOFTWARE.
 
 import configparser
+import tempfile
 import sys
 import os
 
-from revu.repos.github import GitHubRepo
+from revu.repos.github import GitHubRepo, get_github
 from revu.sessions.tmux import TmuxSession
 from revu.repl import RevuREPL
+import subprocess
+import revu.diff
 
 
 def main():
@@ -59,3 +62,27 @@ def main():
         # repo.restore()
 
     return _(*sys.argv[1:])
+
+
+def comment():
+    _, fpath, line = sys.argv
+    github = get_github("paultag")
+
+    os.chdir(os.environ['REVU_GIT_PATH'])
+
+    repo = github.repository(*os.environ['REVU_GITHUB_REPO'].split("/", 1))
+    pr = repo.pull_request(os.environ['REVU_GITHUB_PULL_REQUEST'])
+
+    with open(fpath, 'r') as fd:
+        fpath, index = revu.diff.line_to_file(fd, int(line))
+        _, fpath = fpath.split("/", 1)
+        log = subprocess.check_output([
+            "git", "log", '--format=%H', '-n', '1', fpath
+        ]).strip().decode('utf-8')
+
+        with tempfile.NamedTemporaryFile(suffix=".tmp") as tmp:
+            subprocess.call(['vim', tmp.name])
+            with open(tmp.name, 'r') as comment:
+                body = comment.read()
+        print(log, fpath, index)
+        pr.create_review_comment(body, log, fpath, index)

@@ -21,10 +21,13 @@
 from revu.repo import Repo, Review
 from pygit2 import Repository
 
+import os
+
 
 class GitRepo(Repo):
 
     def __init__(self, *, path):
+        os.environ["REVU_GIT_PATH"] = path
         self.path = path
         self.git = Repository('{}/.git'.format(self.path))
 
