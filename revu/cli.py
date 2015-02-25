@@ -74,15 +74,18 @@ def comment():
     pr = repo.pull_request(os.environ['REVU_GITHUB_PULL_REQUEST'])
 
     with open(fpath, 'r') as fd:
-        fpath, index = revu.diff.line_to_file(fd, int(line))
+        (fpath, index, lines) = revu.diff.line_to_file(fd, int(line))
         _, fpath = fpath.split("/", 1)
         log = subprocess.check_output([
             "git", "log", '--format=%H', '-n', '1', fpath
         ]).strip().decode('utf-8')
 
         with tempfile.NamedTemporaryFile(suffix=".tmp") as tmp:
+            with open(tmp.name, 'w') as fd:
+                fd.write("    ")
+                fd.write("\n    ".join([x.strip() for x in lines[-20:]]))
             subprocess.call(['vim', tmp.name])
             with open(tmp.name, 'r') as comment:
                 body = comment.read()
-        print(log, fpath, index)
+
         pr.create_review_comment(body, log, fpath, index)

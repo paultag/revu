@@ -13,14 +13,16 @@ def line_to_file(fd, index):
     count = 0
     diff_count = -1
 
+    _return_lines = []
     for (i, line) in readup(lines, index):
         if line.startswith("@@"):
             diff_count = count
 
         if line.startswith("+++ "):
             _, path = (x.strip() for x in line.split(" ", 1))
-            return (path, diff_count)
+            return (path, diff_count, list(reversed(_return_lines)))
 
+        _return_lines.append(line)
         count += 1
     else:
         raise ValueError("Badd diff line!")
