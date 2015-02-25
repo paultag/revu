@@ -41,12 +41,19 @@ class RevuREPL(cmd.Cmd):
         return "({}) λ ".format(self.repo.name)
 
     def do_diff(self, line):
+        """
+        Show a diff of the Pull Request, and open it with vim.
+        """
         with tempfile.NamedTemporaryFile(suffix='task') as temp:
             with open(temp.name, 'w') as fd:
                 fd.write(self.review.diff())
             subprocess.call(['vimdiff', temp.name])
 
     def do_log(self, line):
+        """
+        Show the git log. More exactly, show the log in a graphical
+        format that's kinda fun.
+        """
         subprocess.call([
             'git', '-C', self.repo.path,
             'log', '--graph', '--oneline',
@@ -54,20 +61,35 @@ class RevuREPL(cmd.Cmd):
         ])
 
     def do_comments(self, line):
+        """
+        Show pull request comments.
+        """
         for comment in self.review.comments():
             print(comment)
 
     def do_comment(self, line):
+        """
+        Write a new comment.
+        """
         self.review.comment(line)
 
     def do_merge(self, line):
+        """
+        Merge the pull request into the target branch
+        """
         self.review.merge()
 
     def do_push(self, line):
+        """
+        Push the target branch to the remote.
+        """
         self.review.push()
         return True
 
     def do_skip(self, line):
+        """
+        Skip the branch.
+        """
         return True
 
     def do_EOF(self, line):
