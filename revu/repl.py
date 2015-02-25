@@ -75,3 +75,7 @@ class RevuREPL(cmd.Cmd):
         raise StopIteration("Stawp")
 
     do_exit = do_EOF
+    do_s = do_skip
+    do_c = do_comment
+    do_d = do_diff
+    do_l = do_log
