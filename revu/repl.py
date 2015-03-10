@@ -44,7 +44,7 @@ class RevuREPL(cmd.Cmd):
         """
         Show a diff of the Pull Request, and open it with vim.
         """
-        with tempfile.NamedTemporaryFile(suffix='task') as temp:
+        with tempfile.NamedTemporaryFile(suffix='.revu.diff') as temp:
             with open(temp.name, 'w') as fd:
                 fd.write(self.review.diff())
             subprocess.call(['vimdiff', temp.name])
@@ -71,7 +71,15 @@ class RevuREPL(cmd.Cmd):
         """
         Write a new comment.
         """
-        self.review.comment(line)
+        if line.strip() != "":
+            self.review.comment(line)
+            return
+
+        with tempfile.NamedTemporaryFile(suffix='.revu.md') as temp:
+            subprocess.call(['vim', temp.name])
+            with open(temp.name, 'r') as fd:
+                self.review.comment(fd.read())
+
 
     def do_merge(self, line):
         """
