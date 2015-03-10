@@ -1,0 +1,7 @@
+[hy]
+repo = hylang/hy
+path = /home/tag/dev/local/hy
+
+[openstates]
+repo = sunlightlabs/openstates
+path = /home/tag/dev/sunlight/openstates
