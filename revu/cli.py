@@ -59,7 +59,7 @@ def main():
                 repl.cmdloop()
             except StopIteration:
                 break
-        # repo.restore()
+        repo.end()
 
     return _(*sys.argv[1:])
 

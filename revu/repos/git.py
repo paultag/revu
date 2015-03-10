@@ -47,3 +47,6 @@ class GitRepo(Repo):
         Iterate over open reviews for this repo.
         """
         raise NotImplementedError("Implement me")
+
+    def end(self):
+        self.git.checkout("refs/heads/master")  # XXX: Fix this.
